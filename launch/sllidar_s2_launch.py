@@ -13,7 +13,7 @@ def generate_launch_description():
     serial_port = LaunchConfiguration('serial_port', default='/dev/ttyUSB_LIDAR')
     serial_baudrate = LaunchConfiguration('serial_baudrate', default='1000000') #for s2 is 1 000 000
     frame_id = LaunchConfiguration('frame_id', default='lidar_onBoard_link')
-    inverted = LaunchConfiguration('inverted', default='false')
+    inverted = LaunchConfiguration('inverted', default='true')
     angle_compensate = LaunchConfiguration('angle_compensate', default='false')
     scan_mode = LaunchConfiguration('scan_mode', default='DenseBoost')
 

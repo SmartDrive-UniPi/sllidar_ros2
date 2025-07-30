@@ -213,10 +213,15 @@ class SLlidarNode : public rclcpp::Node
         scan_msg->header.frame_id = frame_id;
         scan_count++;
 
+        // Edoardo Caciorgna: Ho eliminato questa strana conversione per risolvere i problemi di mapping 
+        // tra -pi e pi che fatto in questo modo inverte i dati e quindi richiede di trasformare:
+        // angle_meas_i = (pi - scan_msg->angle_max) + scan_msg->angle_increment * i 
+        // MA questo è uguale a: = (pi - (pi - angle_min)) + scan_msg->angle_increment * i == angle_min + scan_msg->angle_increment * i
+        // che risulta più intuitivo
         bool reversed = (angle_max > angle_min);
         if ( reversed ) {
-            scan_msg->angle_min =  M_PI - angle_max;
-            scan_msg->angle_max =  M_PI - angle_min;
+            scan_msg->angle_min =  angle_min;//M_PI - angle_max;
+            scan_msg->angle_max =  angle_max;//M_PI - angle_min;
         } else {
             scan_msg->angle_min =  M_PI - angle_min;
             scan_msg->angle_max =  M_PI - angle_max;
@@ -225,12 +230,20 @@ class SLlidarNode : public rclcpp::Node
 
         scan_msg->scan_time = scan_time;
         scan_msg->time_increment = scan_time / (double)(node_count-1);
+
+        // // DEBUG ONLY ----- REMOVEEEE
+        // scan_msg->range_min = reversed ? 1.0 : 0.0;
+
         scan_msg->range_min = 0.05;
         scan_msg->range_max = max_distance;//8.0;
 
         scan_msg->intensities.resize(node_count);
         scan_msg->ranges.resize(node_count);
         bool reverse_data = (!inverted && reversed) || (inverted && !reversed);
+
+        // // DEBUG ONLY ----- REMOVEEEE
+        // scan_msg->range_min = reverse_data ? scan_msg->range_min+10.0 : scan_msg->range_min+0.0;
+
         if (!reverse_data) {
             for (size_t i = 0; i < node_count; i++) {
                 float read_value = (float) nodes[i].dist_mm_q2/4.0f/1000;
