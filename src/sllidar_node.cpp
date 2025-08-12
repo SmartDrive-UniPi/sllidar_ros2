@@ -218,6 +218,7 @@ class SLlidarNode : public rclcpp::Node
         // angle_meas_i = (pi - scan_msg->angle_max) + scan_msg->angle_increment * i 
         // MA questo è uguale a: = (pi - (pi - angle_min)) + scan_msg->angle_increment * i == angle_min + scan_msg->angle_increment * i
         // che risulta più intuitivo
+
         bool reversed = (angle_max > angle_min);
         if ( reversed ) {
             scan_msg->angle_min =  angle_min;//M_PI - angle_max;
